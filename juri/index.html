@@ -14,6 +14,17 @@
 (function () {
   var API = 'https://script.google.com/macros/s/AKfycbxerFoxxVc5qFMcy7S4TWEhJzAByUNn9kpn3-9TrFwq0TyDvSi2NP73JiDX8dQhTaIl/exec';
   var statusEl = document.getElementById('status');
+  /* Favicon (logo di tab browser): file favicon.png di root repo */
+  var ICON = '../favicon.svg?v=1';
+  function setIcon() {
+    try {
+      var l = document.createElement('link');
+      l.rel = 'icon'; l.type = 'image/png'; l.href = ICON;
+      (document.head || document.documentElement).appendChild(l);
+    } catch (e) {}
+  }
+  setIcon();
+
   var token = (new URLSearchParams(location.search).get('k') || '').replace(/[^A-Za-z0-9]/g, '');
 
   function post(fn, args) {
@@ -50,6 +61,7 @@
   if (!token) { statusEl.textContent = 'Link tidak lengkap. Pastikan link berakhiran ?k=KODE.'; return; }
   call('api_halaman', [token], 0).then(function (html) {
     document.open(); document.write(html); document.close();
+    if (!document.querySelector('link[rel~="icon"]')) setIcon();
   }).catch(function (e) { statusEl.textContent = (e && e.message) || 'Gagal memuat. Muat ulang halaman.'; });
 })();
 </script>
