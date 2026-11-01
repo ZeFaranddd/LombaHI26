@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kurasi Poster</title>
+<style>body{margin:0;padding:24px;font:16px/1.5 system-ui,sans-serif;color:#555}</style>
+</head>
+<body>
+<p id="status">Memuat…</p>
+<script>
+/* Loader: mengambil tampilan dari Apps Script tanpa cookie Google (anti masalah /u/1/).
+   File ini tidak perlu diubah saat UI diperbarui; ubah UI di Apps Script saja. */
+(function () {
+  var API = 'https://script.google.com/macros/s/AKfycby7aid8eOHpTUiYRWfkJS3mPeOMSE1oWzb8NunvairEdTUeVrtm4OR6i4U8wQInddKV/exec';
+  var statusEl = document.getElementById('status');
+  var token = (new URLSearchParams(location.search).get('k') || '').replace(/[^A-Za-z0-9]/g, '');
+
+  function post(fn, args) {
+    return fetch(API, {
+      method: 'POST', credentials: 'omit', redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ fn: fn, args: args })
+    }).then(function (r) { return r.json(); }).then(function (j) {
+      if (!j || !j.ok) { var e = new Error((j && j.message) || 'Terjadi kesalahan.'); e.app = true; throw e; }
+      return j.r;
+    });
+  }
+  function call(fn, args, n) {
+    return post(fn, args).catch(function (e) {
+      if (e.app) throw e;
+      if (n >= 1) throw new Error('Koneksi bermasalah. Periksa internet lalu muat ulang halaman.');
+      return new Promise(function (r) { setTimeout(r, 800); }).then(function () { return call(fn, args, n + 1); });
+    });
+  }
+
+  /* Pengganti google.script.run untuk halaman yang dimuat dari Apps Script */
+  function runner(ok, fail) {
+    return new Proxy({}, { get: function (_, name) {
+      if (name === 'withSuccessHandler') return function (f) { return runner(f, fail); };
+      if (name === 'withFailureHandler') return function (f) { return runner(ok, f); };
+      return function () {
+        var a = Array.prototype.slice.call(arguments);
+        call(String(name), a, 0).then(function (r) { if (ok) ok(r); }, function (e) { if (fail) fail(e); else console.error(e); });
+      };
+    } });
+  }
+  window.google = { script: { run: runner(null, null) } };
+
+  if (!token) { statusEl.textContent = 'Link tidak lengkap. Pastikan link berakhiran ?k=KODE.'; return; }
+  call('api_halaman', [token], 0).then(function (html) {
+    document.open(); document.write(html); document.close();
+  }).catch(function (e) { statusEl.textContent = (e && e.message) || 'Gagal memuat. Muat ulang halaman.'; });
+})();
+</script>
+</body>
+</html>
