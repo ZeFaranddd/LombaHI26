@@ -15,7 +15,23 @@
 (function () {
   var API = 'https://script.google.com/macros/s/AKfycbwS9mTBRqlygRHc73NMY7Z97xxx7zeseL5DI0a97h8ABbdWfV1QhZUT_K6CCAOoYMDc/exec'; // https://script.google.com/macros/s/.../exec
   var statusEl = document.getElementById('status');
+  /* Favicon: memakai logo SVG yang sudah ada di halaman (tanpa file terpisah) */
   var ICON = '../favicon.svg'; // opsional: isi '../favicon.svg' untuk ikon sementara saat "Memuat…"
+  function setIcon(href) {
+    try {
+      if (!href) return;
+      var o = document.querySelectorAll('link[rel~="icon"]');
+      for (var i = 0; i < o.length; i++) o[i].parentNode.removeChild(o[i]);
+      var l = document.createElement('link');
+      l.rel = 'icon'; l.type = 'image/svg+xml'; l.href = href;
+      (document.head || document.documentElement).appendChild(l);
+    } catch (e) {}
+  }
+  function iconDariLogo() {
+    var img = document.querySelector('img[src^="data:image/svg+xml"]');
+    setIcon(img ? img.src : ICON);
+  }
+  setIcon(ICON);
   var token = (new URLSearchParams(location.search).get('k') || '').replace(/[^A-Za-z0-9]/g, '');
 
   function post(fn, args) {
