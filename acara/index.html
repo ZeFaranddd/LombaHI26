@@ -15,6 +15,7 @@
 (function () {
   var API = 'https://script.google.com/macros/s/AKfycbwS9mTBRqlygRHc73NMY7Z97xxx7zeseL5DI0a97h8ABbdWfV1QhZUT_K6CCAOoYMDc/exec'; // https://script.google.com/macros/s/.../exec
   var statusEl = document.getElementById('status');
+  var ICON = '../favicon.svg'; // opsional: isi '../favicon.svg' untuk ikon sementara saat "Memuat…"
   var token = (new URLSearchParams(location.search).get('k') || '').replace(/[^A-Za-z0-9]/g, '');
 
   function post(fn, args) {
