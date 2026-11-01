@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halaman tidak ditemukan</title>
+<style>body{margin:0;padding:24px;font:16px/1.5 system-ui,sans-serif;color:#555}</style>
+</head>
+<body>
+<p id="t">Mengalihkan…</p>
+<script>
+/* Opsional: bentuk link cantik .../LombaHI26/acara/TOKEN dialihkan ke .../acara/?k=TOKEN.
+   Berlaku untuk folder acara, juri, dan kurasi. */
+(function () {
+  var m = location.pathname.match(/^(\/[^\/]+\/(?:acara|juri|kurasi))\/([A-Za-z0-9]{8,64})\/?$/);
+  if (m) { location.replace(m[1] + '/?k=' + m[2] + location.hash); return; }
+  document.getElementById('t').textContent = 'Halaman tidak ditemukan. Periksa kembali link yang kamu terima.';
+})();
+</script>
+</body>
+</html>
